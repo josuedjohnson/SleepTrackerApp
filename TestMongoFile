@@ -1,0 +1,24 @@
+// Select the database to use.
+use('SleepTrackerDB');
+
+// Insert a few sample sleep records.
+db.getCollection('sleepRecords').insertMany([
+  { 'date': new Date('2025-02-10T00:00:00Z'), 'hoursSlept': 7, 'mood': 'refreshed' },
+  { 'date': new Date('2025-02-11T00:00:00Z'), 'hoursSlept': 6.5, 'mood': 'tired' },
+  { 'date': new Date('2025-02-12T00:00:00Z'), 'hoursSlept': 8, 'mood': 'happy' },
+  { 'date': new Date('2025-02-13T00:00:00Z'), 'hoursSlept': 5, 'mood': 'exhausted' },
+  { 'date': new Date('2025-02-14T00:00:00Z'), 'hoursSlept': 7.5, 'mood': 'energetic' }
+]);
+
+// Find how many sleep records exist for February 12, 2025.
+const sleepOnFeb12 = db.getCollection('sleepRecords').find({
+  date: { $gte: new Date('2025-02-12'), $lt: new Date('2025-02-13') }
+}).count();
+
+// Print the number of sleep records for that date.
+console.log(`${sleepOnFeb12} sleep records found for February 12, 2025.`);
+
+// Aggregate total sleep hours per year.
+db.getCollection('sleepRecords').aggregate([
+  { $group: { _id: { year: { $year: "$date" } }, totalSleepHours: { $sum: "$hoursSlept" } } }
+]);
