@@ -1,0 +1,46 @@
+import React, { useState } from "react";
+import { TextField, Button } from "@mui/material";
+import { DateTimePicker } from "@mui/x-date-pickers";
+
+function SleepDataInputForm() {
+    const [sleepStart, setSleepStart] = useState<Date | null>(null);
+    const [wakeUpTime, setWakeUpTime] = useState<Date | null>(null);
+    const [notes, setNotes] = useState("");
+  
+    const handleSubmit = (event: React.FormEvent) => {
+      event.preventDefault();
+      if (!sleepStart || !wakeUpTime) {
+        alert("Please enter both sleep and wake-up times.");
+        return;
+      }
+      console.log("Submitted:", { sleepStart, wakeUpTime, notes });
+    };
+  
+    return (
+      <form onSubmit={handleSubmit}>
+        <h2>Sleep Data Input</h2>
+        <DateTimePicker
+          label="Sleep Start Time"
+          value={sleepStart}
+          onChange={setSleepStart}
+        />
+        <DateTimePicker
+          label="Wake Up Time"
+          value={wakeUpTime}
+          onChange={setWakeUpTime}
+        />
+        <TextField
+          label="Notes"
+          multiline
+          rows={3}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
+        <Button type="submit" variant="contained" color="primary">
+          Submit
+        </Button>
+      </form>
+    );
+  }
+  
+  export default SleepDataInputForm;
