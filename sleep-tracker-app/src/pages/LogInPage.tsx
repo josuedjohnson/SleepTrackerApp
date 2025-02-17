@@ -8,6 +8,8 @@ function LogInPage() {
   const [UserName, setUserName] = useState("");
   const [Password, setPassword] = useState("");
 
+  const navigate = useNavigate();
+
   return (
     <>
       <h1>Welcome to your Sleep Analysis Tool</h1>
@@ -27,7 +29,10 @@ function LogInPage() {
         ></InputBox>
         <br />
         <button type="submit"> Submit </button>
+
+        
       </form>
+      <button onClick={() => navigate("/dashboard")}>Go to Dashboard</button>
     </>
   );
 }
