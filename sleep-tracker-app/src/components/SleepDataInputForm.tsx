@@ -3,10 +3,11 @@ import { TextField, Button } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Dayjs } from "dayjs";
 
 function SleepDataInputForm() {
-    const [sleepStart, setSleepStart] = useState<Date | null>(null);
-    const [wakeUpTime, setWakeUpTime] = useState<Date | null>(null);
+    const [sleepStart, setSleepStart] = useState<Dayjs | null>(null);
+    const [wakeUpTime, setWakeUpTime] = useState<Dayjs | null>(null);
     const [notes, setNotes] = useState("");
   
     const handleSubmit = (event: React.FormEvent) => {
