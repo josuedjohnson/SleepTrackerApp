@@ -9,31 +9,34 @@ function RegisterPage() {
   const [UserName, setUserName] = useState("");
   const [Password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+
     try {
-      const response = await axios.post("http://localhost:5000/api/register", {
+      const response = await axios.post("http://localhost:5001/auth/register", {
         username: UserName,
         password: Password
       });
-      localStorage.setItem("token", response.data.token);
-      navigate("/dashboard");
-      console.log(response.data);
-    } catch (error) {
-      setError("Invalid username or password");
+      if (response.data && response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        navigate("/dashboard");
+      } else {
+        setError("Registration failed - please try again");
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Registration failed - please try again");
     }
   };
 
-  
-
-  const navigate = useNavigate();
 
   return (
     <>
       <h1>Welcome to your Sleep Analysis Tool</h1>
       <p>Create an Account Here</p>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleRegister}>
         <label>Username:</label>
         <InputBox
           value={UserName}
@@ -50,9 +53,9 @@ function RegisterPage() {
         <button type="submit"> Submit </button>
         {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
-      <button onClick={() => navigate("/dashboard")}>Go to Dashboard</button>
+      <p>Already have an account? <button onClick={() => navigate("/")}>Log in</button></p>
     </>
   );
 }
 
-export default LogInPage;
+export default RegisterPage;
