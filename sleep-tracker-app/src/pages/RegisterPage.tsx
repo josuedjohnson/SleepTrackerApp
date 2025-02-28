@@ -4,58 +4,58 @@ import InputBox from "../components/InputBox";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function LogInPage() {
+function RegisterPage() {
   //state variables for name and password
-  const [username, setUserName] = useState("");
-  const [password, setPassword] = useState("");
+  const [UserName, setUserName] = useState("");
+  const [Password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+
     try {
-      const response = await axios.post("http://localhost:5001/auth/login", {
-        username,
-        password
+      const response = await axios.post("http://localhost:5001/auth/register", {
+        username: UserName,
+        password: Password
       });
-      localStorage.setItem("token", response.data.token);
       if (response.data && response.data.token) {
+        localStorage.setItem("token", response.data.token);
         navigate("/dashboard");
       } else {
-        setError("Login failed - please try again");
+        setError("Registration failed - please try again");
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed - please try again");
+      setError(err.response?.data?.message || "Registration failed - please try again");
     }
   };
+
+
   return (
     <>
       <h1>Welcome to your Sleep Analysis Tool</h1>
-      <p>Log in Here</p>
-      <form onSubmit={handleLogin}>
+      <p>Create an Account Here</p>
+      <form onSubmit={handleRegister}>
         <label>Username:</label>
         <InputBox
-          value={username}
+          value={UserName}
           onChange={(e) => setUserName(e.target.value)}
         ></InputBox>
         <br />
-        <label>password:</label>
+        <label>Password:</label>
         <InputBox
           type="password"
-          value={password}
+          value={Password}
           onChange={(e) => setPassword(e.target.value)}
         ></InputBox>
         <br />
         <button type="submit"> Submit </button>
         {error && <p style={{ color: "red" }}>{error}</p>}
-
-        
       </form>
-      <p>Don't have an account? <button onClick={() => navigate("/register")}>Create an Account</button></p>
+      <p>Already have an account? <button onClick={() => navigate("/")}>Log in</button></p>
     </>
   );
 }
 
-export default LogInPage;
+export default RegisterPage;

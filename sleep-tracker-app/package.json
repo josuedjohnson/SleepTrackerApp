@@ -1,24 +1,28 @@
 {
-  "name": "sleep-tracker-app",
+  "name": "sleep-tracker",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^6.4.4",
     "@mui/x-date-pickers": "^7.26.0",
     "axios": "^1.7.9",
+    "bcrypt": "^5.1.1",
     "dayjs": "^1.11.13",
+    "dotenv": "^16.4.7",
+    "jsonwebtoken": "^9.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.5"
+  },
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
