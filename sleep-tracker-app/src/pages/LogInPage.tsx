@@ -3,6 +3,7 @@ import { useState } from "react";
 import InputBox from "../components/InputBox";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../styles/Login.css";
 
 function LogInPage() {
   //state variables for name and password
@@ -32,28 +33,37 @@ function LogInPage() {
   };
   return (
     <>
-      <h1>Welcome to your Sleep Analysis Tool</h1>
-      <p>Log in Here</p>
-      <form onSubmit={handleLogin}>
-        <label>Username:</label>
-        <InputBox
-          value={username}
-          onChange={(e) => setUserName(e.target.value)}
-        ></InputBox>
-        <br />
-        <label>password:</label>
-        <InputBox
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        ></InputBox>
-        <br />
-        <button type="submit"> Submit </button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="container">
+      <div className="left-panel">
+        <h1>Welcome to SleepSync<br></br>Sign into your account</h1>
+        <form onSubmit={handleLogin}>
+          <InputBox
+            value={username}
+            onChange={(e) => setUserName(e.target.value)}
+            className="input-box"
+            placeholder="Enter your username"
+          ></InputBox>
+          <br />
+          <InputBox
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input-box"
+            placeholder="Enter your password"
+          ></InputBox>
+          <br />
+          <p className="forgot-password">Forgot Password?</p>
+          <button type="submit" className="button">Log In</button>
+          {error && <p style={{ color: "red" }}>{error}</p>}
 
-        
-      </form>
-      <p>Don't have an account? <button onClick={() => navigate("/register")}>Create an Account</button></p>
+          
+        </form>
+        <p className="sign-up-text">
+            Don't have an account?
+            <span className="sign-up-link" onClick={() => navigate("/register")}> Sign up now</span>
+        </p>
+      </div>
+    </div>
     </>
   );
 }

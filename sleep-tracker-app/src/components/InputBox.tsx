@@ -3,6 +3,7 @@ interface InputBoxProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   type?: string;
+  className?: string;
 }
 
 const InputBox: React.FC<InputBoxProps> = ({
@@ -10,6 +11,7 @@ const InputBox: React.FC<InputBoxProps> = ({
   placeholder,
   onChange,
   type = "text",
+  className
 }) => {
   return (
     <input
@@ -17,6 +19,7 @@ const InputBox: React.FC<InputBoxProps> = ({
       value={value}
       onChange={onChange}
       placeholder={placeholder}
+      className={`input-box ${className || ""}`}
     />
   );
 };
