@@ -35,6 +35,7 @@ function LogInPage() {
     <>
     <div className="container">
       <div className="left-panel">
+      <div className="logo">SleepSync</div>
         <h1>Welcome to SleepSync<br></br>Sign into your account</h1>
         <form onSubmit={handleLogin}>
           <InputBox
