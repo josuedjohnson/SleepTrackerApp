@@ -3,7 +3,7 @@ import { useState } from "react";
 import InputBox from "../components/InputBox";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../styles/Login.css";
+import "../styles/Auth.css";
 
 function LogInPage() {
   //state variables for name and password
@@ -33,8 +33,8 @@ function LogInPage() {
   };
   return (
     <>
-    <div className="left-container">
-      <div className="left-panel">
+    <div className="container left-container">
+      <div className="panel">
       <div className="logo">SleepSync</div>
         <h1>Welcome to SleepSync<br></br>Sign into your account</h1>
         <form onSubmit={handleLogin}>

@@ -3,7 +3,7 @@ import { useState } from "react";
 import InputBox from "../components/InputBox";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../styles/Register.css";
+import "../styles/Auth.css";
 
 function RegisterPage() {
   //state variables for name and password
@@ -35,8 +35,8 @@ function RegisterPage() {
 
   return (
     <>
-    <div className="right-container">
-    <div className="right-panel">
+    <div className="container right-container">
+    <div className="panel">
     <div className="logo">SleepSync</div>
       <h1>Welcome to SleepSync<br></br>Create an Account Here</h1>
       <form onSubmit={handleRegister}>
