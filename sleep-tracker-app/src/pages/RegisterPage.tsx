@@ -61,7 +61,7 @@ function RegisterPage() {
           placeholder="Enter your password"
         ></InputBox>
         <br />
-        <div style={{ height: "15px" }}></div>
+        <div style={{ height: "5px" }}></div>
         <button type="submit" className="button">Create Account</button>
         {error && <p style={{ color: "red" }}>{error}</p>}
 

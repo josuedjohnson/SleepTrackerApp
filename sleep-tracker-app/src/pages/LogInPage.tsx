@@ -61,7 +61,6 @@ function LogInPage() {
           <button type="submit" className="button">Log In</button>
           {error && <p style={{ color: "red" }}>{error}</p>}
 
-          
         </form>
         <p className="sign-up-text">
             Don't have an account?
