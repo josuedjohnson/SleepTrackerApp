@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import InputBox from "../components/InputBox";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -10,7 +10,13 @@ function RegisterPage() {
   const [UserName, setUserName] = useState("");
   const [Password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [show, setShow] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setTimeout(() => setShow(true), 50); // Small delay to trigger animation
+  }, []);
+
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,7 +41,7 @@ function RegisterPage() {
 
   return (
     <>
-    <div className="container right-container">
+    <div className={`container right-container ${show ? "show" : ""}`}>
     <div className="panel">
     <div className="logo">SleepSync</div>
       <h1>Welcome to SleepSync<br></br>Create an Account Here</h1>

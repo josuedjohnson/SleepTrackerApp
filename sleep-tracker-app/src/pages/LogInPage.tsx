@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import InputBox from "../components/InputBox";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -10,8 +10,12 @@ function LogInPage() {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [show, setShow] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setTimeout(() => setShow(true), 50); // Small delay to trigger animation
+  }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +37,7 @@ function LogInPage() {
   };
   return (
     <>
-    <div className="container left-container">
+    <div className={`container left-container ${show ? "show" : ""}`}>
       <div className="panel">
       <div className="logo">SleepSync</div>
         <h1>Welcome to SleepSync<br></br>Sign into your account</h1>
