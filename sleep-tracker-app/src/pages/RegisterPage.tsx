@@ -35,8 +35,8 @@ function RegisterPage() {
 
   return (
     <>
-    <div className="container">
-    <div className="left-panel">
+    <div className="right-container">
+    <div className="right-panel">
     <div className="logo">SleepSync</div>
       <h1>Welcome to SleepSync<br></br>Create an Account Here</h1>
       <form onSubmit={handleRegister}>

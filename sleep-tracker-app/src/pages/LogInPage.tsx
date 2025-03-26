@@ -33,7 +33,7 @@ function LogInPage() {
   };
   return (
     <>
-    <div className="container">
+    <div className="left-container">
       <div className="left-panel">
       <div className="logo">SleepSync</div>
         <h1>Welcome to SleepSync<br></br>Sign into your account</h1>
