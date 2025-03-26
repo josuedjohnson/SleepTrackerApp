@@ -55,6 +55,7 @@ function RegisterPage() {
           placeholder="Enter your password"
         ></InputBox>
         <br />
+        <div style={{ height: "15px" }}></div>
         <button type="submit" className="button">Create Account</button>
         {error && <p style={{ color: "red" }}>{error}</p>}
 
@@ -62,7 +63,7 @@ function RegisterPage() {
       </form>
       <p className="sign-up-text">
         Already have an account? 
-        <span className="sign-up-link" onClick={() => navigate("/")}>Log in</span>
+        <span className="sign-up-link" onClick={() => navigate("/")}> Log in</span>
       </p>
       </div>
       </div>
