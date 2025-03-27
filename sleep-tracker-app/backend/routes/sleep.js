@@ -5,13 +5,13 @@ const jwt = require('jsonwebtoken');
 
 // Middleware to verify token
 const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
+  const token = req.headers.authorization?.split(' ')[1]; //retrieves token from request
   
   if (!token) {
     return res.status(401).json({ message: "No token provided" });
   }
 
-  try {
+  try { //adds userID to the request to link user to their sleep form
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.userId = decoded.userId;
     next();
