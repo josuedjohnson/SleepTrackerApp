@@ -1,33 +1,59 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const Sleep = require("../models/Sleep");
-const authenticateToken = require("../middleware/auth");
+const Sleep = require('../models/Sleep');
+const jwt = require('jsonwebtoken');
 
-// GET /sleep – get all sleep entries for logged-in user
-router.get("/", authenticateToken, async (req, res) => {
-  try {
-    const sleepData = await Sleep.find({ userId: req.user.userId }).sort({ sleepStart: 1 });
-    res.json(sleepData);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch sleep data" });
+// Middleware to verify token
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
   }
-});
 
-// POST /sleep – create sleep entry for logged-in user
-router.post("/", authenticateToken, async (req, res) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.userId;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+};
+
+// Add sleep data
+router.post('/', verifyToken, async (req, res) => {
   try {
     const { sleepStart, wakeUpTime, notes } = req.body;
-    const newEntry = new Sleep({
-      userId: req.user.userId,
+
+    // Validate required fields
+    if (!sleepStart || !wakeUpTime) {
+      return res.status(400).json({ message: "Sleep start and wake up times are required" });
+    }
+
+    // Create sleep entry
+    const sleepEntry = await Sleep.create({
+      userId: req.userId,
       sleepStart,
       wakeUpTime,
-      notes,
+      notes
     });
-    await newEntry.save();
-    res.status(201).json({ message: "Sleep entry saved!" });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to save sleep data" });
+
+    res.status(201).json(sleepEntry);
+  } catch (error) {
+    console.error("Error adding sleep data:", error);
+    res.status(500).json({ message: "Error adding sleep data" });
   }
 });
 
-module.exports = router;
+// Get all sleep data for a user
+router.get('/', verifyToken, async (req, res) => {
+  try {
+    const sleepData = await Sleep.find({ userId: req.userId }).sort({ sleepStart: -1 });
+    res.json(sleepData);
+  } catch (error) {
+    console.error("Error fetching sleep data:", error);
+    res.status(500).json({ message: "Error fetching sleep data" });
+  }
+});
+
+module.exports = router; 

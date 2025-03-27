@@ -1,21 +1,86 @@
-const jwt = require("jsonwebtoken");
+const express = require('express');
+const router = express.Router();
+const User = require('../models/User');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"]; // "Bearer <token>"
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) {
-    return res.status(401).json({ message: "Access denied. No token provided." });
-  }
-
+router.post("/register", async (req, res) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // contains userId
-    next();
-  } catch (err) {
-    console.error("JWT verification failed:", err);
-    res.status(403).json({ message: "Invalid or expired token." });
-  }
-};
+    const { username, password } = req.body;
 
-module.exports = authenticateToken;
+    // Make sure username and password are provided
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
+    }
+    
+    // Check if username is in use
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: "Username already exists" });
+    }
+
+    // Hash given password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create and store user with hashed password
+    const user = await User.create({ 
+      username, 
+      password: hashedPassword 
+    });
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // Return user to frontend
+    const userResponse = {
+      _id: user._id,
+      username: user.username,
+      createdAt: user.createdAt,
+      token: token
+    };
+
+    res.status(201).json(userResponse);
+  } catch (error) {
+    res.status(500).json({ message: "Error creating user" });
+  }
+});
+
+router.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // Check if user exists
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid username or password" });
+    }
+
+    // Check password
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(400).json({ message: "Invalid username or password" });
+    }
+
+    // Generate token
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    // Send response to frontend
+    res.json({
+      token,
+      user: {
+        _id: user._id,
+        username: user.username
+      }
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Error logging in" });
+  }
+});
+
+module.exports = router; 
