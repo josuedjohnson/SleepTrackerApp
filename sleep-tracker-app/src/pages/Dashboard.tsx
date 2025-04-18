@@ -15,6 +15,7 @@ import {
   Title,
 } from "chart.js";
 
+// Register Chart.js components
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend, Title);
 
 function Dashboard() {
@@ -48,7 +49,10 @@ function Dashboard() {
           };
         });
 
-        setSleepData(formatted);
+        // ✅ Sort by sleepStart before displaying
+        setSleepData(
+          formatted.sort((a, b) => a.sleepStart.valueOf() - b.sleepStart.valueOf())
+        );
       } catch (err: any) {
         console.error("Error fetching sleep data:", err);
         if (err.response?.status === 401 || err.response?.status === 403) {
@@ -61,13 +65,16 @@ function Dashboard() {
     fetchSleepData();
   }, []);
 
+  // Add new entry and keep chart sorted
   const handleSleepSubmit = (data: {
     sleepStart: any;
     wakeUpTime: any;
     hoursSlept: number;
     notes: string;
   }) => {
-    setSleepData((prev) => [...prev, data]);
+    setSleepData((prev) =>
+      [...prev, data].sort((a, b) => a.sleepStart.valueOf() - b.sleepStart.valueOf())
+    );
 
     axios
       .post(
