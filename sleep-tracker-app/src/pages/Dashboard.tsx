@@ -21,7 +21,13 @@ ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip,
 function Dashboard() {
   const navigate = useNavigate();
   const [sleepData, setSleepData] = useState<
-    { sleepStart: any; wakeUpTime: any; hoursSlept: number; notes: string }[]
+    {
+      sleepStart: any;
+      wakeUpTime: any;
+      hoursSlept: number;
+      notes: string;
+      score: number;
+    }[]
   >([]);
 
   const token = localStorage.getItem("token");
@@ -46,13 +52,11 @@ function Dashboard() {
             wakeUpTime,
             hoursSlept,
             notes: entry.notes,
+            score: entry.score ?? 0,
           };
         });
 
-        // ✅ Sort by sleepStart before displaying
-        setSleepData(
-          formatted.sort((a, b) => a.sleepStart.valueOf() - b.sleepStart.valueOf())
-        );
+        setSleepData(formatted.sort((a, b) => a.sleepStart.valueOf() - b.sleepStart.valueOf()));
       } catch (err: any) {
         console.error("Error fetching sleep data:", err);
         if (err.response?.status === 401 || err.response?.status === 403) {
@@ -65,12 +69,12 @@ function Dashboard() {
     fetchSleepData();
   }, []);
 
-  // Add new entry and keep chart sorted
   const handleSleepSubmit = (data: {
     sleepStart: any;
     wakeUpTime: any;
     hoursSlept: number;
     notes: string;
+    score: number;
   }) => {
     setSleepData((prev) =>
       [...prev, data].sort((a, b) => a.sleepStart.valueOf() - b.sleepStart.valueOf())
@@ -83,6 +87,7 @@ function Dashboard() {
           sleepStart: data.sleepStart.toISOString(),
           wakeUpTime: data.wakeUpTime.toISOString(),
           notes: data.notes,
+          score: data.score,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -95,6 +100,14 @@ function Dashboard() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
+  };
+
+  const getRecommendation = (score: number, hours: number): string => {
+    if (hours < 6) return "Try to get more than 6 hours. Build a consistent sleep schedule.";
+    if (score <= 2) return "Consider meditation or chamomile tea to help you destress.";
+    if (score <= 3) return "Try winding down with less screen time before bed.";
+    if (score >= 4 && hours >= 6) return "Great job! Keep up the consistent sleep.";
+    return "Aim for better sleep quality and consistent bedtime.";
   };
 
   const chartData = {
@@ -120,7 +133,10 @@ function Dashboard() {
       },
       tooltip: {
         callbacks: {
-          label: (context: any) => `${context.parsed.y} hours`,
+          label: (context: any) => {
+            const entry = sleepData[context.dataIndex];
+            return `Hours Slept: ${entry.hoursSlept} | Score: ${entry.score}/5`;
+          },
         },
       },
     },
@@ -152,6 +168,18 @@ function Dashboard() {
       <div style={{ flex: 1 }}>
         <h2>Sleep Duration Chart</h2>
         <Line data={chartData} options={chartOptions} />
+
+        {sleepData.length > 0 && (
+          <div style={{ marginTop: "20px" }}>
+            <h3>Latest Sleep Recommendation</h3>
+            <p>
+              {getRecommendation(
+                sleepData[sleepData.length - 1].score,
+                sleepData[sleepData.length - 1].hoursSlept
+              )}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
