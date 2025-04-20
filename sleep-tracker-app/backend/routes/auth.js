@@ -83,4 +83,23 @@ router.post("/login", async (req, res) => {
   }
 });
 
+const { verifyToken } = require('./sleep');
+
+router.get("/user", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      username: user.username,
+      passwordLength: 8 
+    });
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router; 

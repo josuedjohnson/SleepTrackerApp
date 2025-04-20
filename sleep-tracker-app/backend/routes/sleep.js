@@ -20,6 +20,7 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+
 // Add sleep data
 router.post('/', verifyToken, async (req, res) => {
   try {
@@ -56,6 +57,7 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
+
 // Delete a specific sleep entry
 router.delete('/:id', verifyToken, async (req, res) => {
   try {
@@ -75,5 +77,5 @@ router.delete('/:id', verifyToken, async (req, res) => {
   }
 });
 
-
-module.exports = router; 
+router.verifyToken = verifyToken;
+module.exports = router;
