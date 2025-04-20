@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function LogoutPage() {
+function UserProfile() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -35,13 +35,17 @@ function LogoutPage() {
   };
 
   return (
-    <>
-      <h1>Sleep Tracker Dashboard</h1>
-      {username && <p>Username: <strong>{username}</strong>!</p>}
-      {password && <p>Password: <strong>{username}</strong>!</p>}
-      <button onClick={handleLogout}>Logout</button>
-    </>
+    <div style={{ display: "flex", gap: "40px", padding: "20px" }}>
+        <div style={{ flex: 1 }}>
+            <button onClick={handleLogout}>Logout</button>
+            <p>Username: {username}</p>
+            <p>Password: {password}</p>
+            <button onClick={() => navigate("/dashboard")}> Back</button>
+        </div>
+
+    </div>
+
   );
 }
 
-export default LogoutPage;
+export default UserProfile;

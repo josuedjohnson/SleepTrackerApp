@@ -139,6 +139,7 @@ function Dashboard() {
       <div style={{ flex: 1 }}>
         <h1>Sleep Tracker Dashboard</h1>
         <button onClick={handleLogout}>Logout</button>
+        <button onClick={() => navigate("/userprofile")}> Your Profile</button>
         <SleepDataInputForm onSubmitSleepData={handleSleepSubmit} />
       </div>
 
