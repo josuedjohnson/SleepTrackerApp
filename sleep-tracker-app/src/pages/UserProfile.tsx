@@ -5,7 +5,7 @@ import axios from "axios";
 function UserProfile() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [passwordLength, setPasswordLength] = useState(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -13,12 +13,12 @@ function UserProfile() {
         const token = localStorage.getItem("token");
         if (!token) return navigate("/");
 
-        const response = await axios.get("/api/user", {
+        const response = await axios.get("http://localhost:5001/auth/user", {
           headers: { Authorization: `Bearer ${token}` },
         });
         
         setUsername(response.data.username);
-        setPassword(response.data.password);
+        setPasswordLength(response.data.passwordLength);
       } catch (error) {
         console.error("Failed to fetch user data", error);
         localStorage.removeItem("token");
@@ -29,6 +29,8 @@ function UserProfile() {
     fetchUserData();
   }, [navigate]);
 
+
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
@@ -37,10 +39,10 @@ function UserProfile() {
   return (
     <div style={{ display: "flex", gap: "40px", padding: "20px" }}>
         <div style={{ flex: 1 }}>
-            <button onClick={handleLogout}>Logout</button>
             <p>Username: {username}</p>
-            <p>Password: {password}</p>
+            <p>Password: {"•".repeat(passwordLength)}</p>
             <button onClick={() => navigate("/dashboard")}> Back</button>
+            <button onClick={handleLogout}>Logout</button>
         </div>
 
     </div>
