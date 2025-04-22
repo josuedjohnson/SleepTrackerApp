@@ -5,13 +5,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import axios from "axios";
 
-// Define the prop type
 interface Props {
   onSubmitSleepData: (data: {
     sleepStart: Dayjs;
     wakeUpTime: Dayjs;
     hoursSlept: number;
     notes: string;
+    score: number;
   }) => void;
 }
 
@@ -19,6 +19,7 @@ function SleepDataInputForm({ onSubmitSleepData }: Props) {
   const [sleepStart, setSleepStart] = useState<Dayjs | null>(null);
   const [wakeUpTime, setWakeUpTime] = useState<Dayjs | null>(null);
   const [notes, setNotes] = useState("");
+  const [score, setScore] = useState(3);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -45,6 +46,7 @@ function SleepDataInputForm({ onSubmitSleepData }: Props) {
           sleepStart: sleepStart.toISOString(),
           wakeUpTime: wakeUpTime.toISOString(),
           notes,
+          score,
         },
         {
           headers: {
@@ -55,13 +57,12 @@ function SleepDataInputForm({ onSubmitSleepData }: Props) {
 
       const hoursSlept = wakeUpTime.diff(sleepStart, "minute") / 60;
 
-      // Send the new entry back to the dashboard to update the chart
-      onSubmitSleepData({ sleepStart, wakeUpTime, hoursSlept, notes });
+      onSubmitSleepData({ sleepStart, wakeUpTime, hoursSlept, notes, score });
 
-      // Clear form
       setSleepStart(null);
       setWakeUpTime(null);
       setNotes("");
+      setScore(3);
       setSuccess("✅ Sleep data saved successfully!");
     } catch (err: any) {
       setError(err.response?.data?.message || "❌ Error saving sleep data");
@@ -101,7 +102,28 @@ function SleepDataInputForm({ onSubmitSleepData }: Props) {
           margin="normal"
         />
 
-        <Button type="submit" variant="contained" color="primary" fullWidth style={{ marginTop: "16px" }}>
+        {/* Score Stars */}
+        <div style={{ marginTop: "16px", marginBottom: "16px" }}>
+          <label style={{ fontWeight: "bold" }}>Score Sleep:</label>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            {[1, 2, 3, 4, 5].map((value) => (
+              <span
+                key={value}
+                style={{
+                  fontSize: "28px",
+                  cursor: "pointer",
+                  color: value <= score ? "gold" : "lightgray",
+                }}
+                onClick={() => setScore(value)}
+              >
+                ★
+              </span>
+            ))}
+            <span>{score}/5</span>
+          </div>
+        </div>
+
+        <Button type="submit" variant="contained" color="primary" fullWidth style={{ marginTop: "8px" }}>
           Submit
         </Button>
 
