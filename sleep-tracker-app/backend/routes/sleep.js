@@ -20,6 +20,7 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+
 // Add sleep data
 router.post('/', verifyToken, async (req, res) => {
   try {
@@ -56,4 +57,25 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-module.exports = router; 
+
+// Delete a specific sleep entry
+router.delete('/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Only delete if the entry belongs to the logged‑in user
+    const deleted = await Sleep.findOneAndDelete({ _id: id, userId: req.userId });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Sleep entry not found" });
+    }
+
+    res.json({ message: "Sleep entry deleted" });
+  } catch (error) {
+    console.error("Error deleting sleep data:", error);
+    res.status(500).json({ message: "Error deleting sleep data" });
+  }
+});
+
+router.verifyToken = verifyToken;
+module.exports = router;

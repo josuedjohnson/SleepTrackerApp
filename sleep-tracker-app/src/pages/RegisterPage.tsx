@@ -1,15 +1,22 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import InputBox from "../components/InputBox";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../styles/Auth.css";
 
 function RegisterPage() {
   //state variables for name and password
   const [UserName, setUserName] = useState("");
   const [Password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [show, setShow] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setTimeout(() => setShow(true), 50); // Small delay to trigger animation
+  }, []);
+
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,26 +41,38 @@ function RegisterPage() {
 
   return (
     <>
-      <h1>Welcome to your Sleep Analysis Tool</h1>
-      <p>Create an Account Here</p>
+    <div className={`container right-container ${show ? "show" : ""}`}>
+    <div className="panel">
+    <div className="logo">SleepSync</div>
+      <h1>Welcome to SleepSync<br></br>Create an Account Here</h1>
       <form onSubmit={handleRegister}>
-        <label>Username:</label>
         <InputBox
           value={UserName}
           onChange={(e) => setUserName(e.target.value)}
+          className="input-box"
+          placeholder="Enter your username"
         ></InputBox>
         <br />
-        <label>Password:</label>
         <InputBox
           type="password"
           value={Password}
           onChange={(e) => setPassword(e.target.value)}
+          className="input-box"
+          placeholder="Enter your password"
         ></InputBox>
         <br />
-        <button type="submit"> Submit </button>
+        <div style={{ height: "5px" }}></div>
+        <button type="submit" className="button">Create Account</button>
         {error && <p style={{ color: "red" }}>{error}</p>}
+
+
       </form>
-      <p>Already have an account? <button onClick={() => navigate("/")}>Log in</button></p>
+      <p className="sign-up-text">
+        Already have an account? 
+        <span className="sign-up-link" onClick={() => navigate("/")}> Log in</span>
+      </p>
+      </div>
+      </div>
     </>
   );
 }
