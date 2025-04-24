@@ -21,12 +21,18 @@ ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip,
 function Dashboard() {
   const navigate = useNavigate();
   const [sleepData, setSleepData] = useState<
-  { id: string; sleepStart: any; wakeUpTime: any; hoursSlept: number; notes: string }[]
+    {
+      id: string;
+      sleepStart: any;
+      wakeUpTime: any;
+      hoursSlept: number;
+      notes: string;
+      score: number;
+    }[]
   >([]);
 
   const token = localStorage.getItem("token");
 
-  // Fetch sleep data for logged-in user
   useEffect(() => {
     const fetchSleepData = async () => {
       try {
@@ -47,10 +53,11 @@ function Dashboard() {
             hoursSlept,
             id: entry._id || entry.id,
             notes: entry.notes,
+            score: entry.score ?? 0,
           };
         });
 
-        setSleepData(formatted);
+        setSleepData(formatted.sort((a, b) => a.sleepStart.valueOf() - b.sleepStart.valueOf()));
       } catch (err: any) {
         console.error("Error fetching sleep data:", err);
         if (err.response?.status === 401 || err.response?.status === 403) {
@@ -68,6 +75,7 @@ function Dashboard() {
     wakeUpTime: any;
     hoursSlept: number;
     notes: string;
+    score: number;
   }) => {
     axios
       .post(
@@ -76,6 +84,7 @@ function Dashboard() {
           sleepStart: data.sleepStart.toISOString(),
           wakeUpTime: data.wakeUpTime.toISOString(),
           notes: data.notes,
+          score: data.score,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -87,27 +96,21 @@ function Dashboard() {
         const wakeUpTime = dayjs(saved.wakeUpTime);
         const hoursSlept = wakeUpTime.diff(sleepStart, "minute") / 60;
 
-        setSleepData((prev) => [
-          ...prev,
-          {
+        setSleepData((prev) =>
+          [...prev, {
             id: saved._id,
             sleepStart,
             wakeUpTime,
             hoursSlept,
             notes: saved.notes,
-          },
-        ]);
+            score: saved.score ?? 0,
+          }].sort((a, b) => a.sleepStart.valueOf() - b.sleepStart.valueOf())
+        );
         console.log("✅ Sleep entry saved");
       })
       .catch((err) => console.error("❌ Failed to save sleep entry:", err));
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
-
-    
   const handleDeleteSleep = (id: string) => {
     axios
       .delete(`http://localhost:5001/sleep/${id}`, {
@@ -118,6 +121,19 @@ function Dashboard() {
         console.log("🗑️ Sleep entry deleted");
       })
       .catch((err) => console.error("❌ Failed to delete sleep entry:", err));
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
+  const getRecommendation = (score: number, hours: number): string => {
+    if (hours < 6) return "Try to get more than 6 hours. Build a consistent sleep schedule.";
+    if (score <= 2) return "Consider meditation or chamomile tea to help you destress.";
+    if (score <= 3) return "Try winding down with less screen time before bed.";
+    if (score >= 4 && hours >= 6) return "Great job! Keep up the consistent sleep.";
+    return "Aim for better sleep quality and consistent bedtime.";
   };
 
   const chartData = {
@@ -143,7 +159,10 @@ function Dashboard() {
       },
       tooltip: {
         callbacks: {
-          label: (context: any) => `${context.parsed.y} hours`,
+          label: (context: any) => {
+            const entry = sleepData[context.dataIndex];
+            return `Hours Slept: ${entry.hoursSlept} | Score: ${entry.score}/5`;
+          },
         },
       },
     },
@@ -168,42 +187,54 @@ function Dashboard() {
     <div style={{ display: "flex", gap: "40px", padding: "20px" }}>
       <div style={{ flex: 1 }}>
         <h1>Sleep Tracker Dashboard</h1>
-        <button onClick={() => navigate("/userprofile")}> Your Profile</button>
+        <button onClick={() => navigate("/userprofile")}>Your Profile</button>
         <SleepDataInputForm onSubmitSleepData={handleSleepSubmit} />
       </div>
 
       <div style={{ marginTop: "20px" }}>
-          <h2>Sleep Logs</h2>
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {sleepData.map((entry) => (
-              <li
-                key={entry.id}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: "6px 0",
-                  borderBottom: "1px solid #eee",
-                }}
-              >
-                <span>
-                  {entry.sleepStart.format("MM/DD HH:mm")} –{" "}
-                  {entry.wakeUpTime.format("MM/DD HH:mm")} (
-                  {entry.hoursSlept.toFixed(2)} h)
-                </span>
-                <FaTrash
-                  style={{ cursor: "pointer" }}
-                  title="Delete entry"
-                  onClick={() => handleDeleteSleep(entry.id)}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
+        <h2>Sleep Logs</h2>
+        <ul style={{ listStyle: "none", padding: 0 }}>
+          {sleepData.map((entry) => (
+            <li
+              key={entry.id}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "6px 0",
+                borderBottom: "1px solid #eee",
+              }}
+            >
+              <span>
+                {entry.sleepStart.format("MM/DD HH:mm")} –{" "}
+                {entry.wakeUpTime.format("MM/DD HH:mm")} (
+                {entry.hoursSlept.toFixed(2)} h)
+              </span>
+              <FaTrash
+                style={{ cursor: "pointer" }}
+                title="Delete entry"
+                onClick={() => handleDeleteSleep(entry.id)}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <div style={{ flex: 1 }}>
         <h2>Sleep Duration Chart</h2>
         <Line data={chartData} options={chartOptions} />
+
+        {sleepData.length > 0 && (
+          <div style={{ marginTop: "20px" }}>
+            <h3>Latest Sleep Recommendation</h3>
+            <p>
+              {getRecommendation(
+                sleepData[sleepData.length - 1].score,
+                sleepData[sleepData.length - 1].hoursSlept
+              )}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
