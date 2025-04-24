@@ -94,7 +94,8 @@ router.get("/user", verifyToken, async (req, res) => {
 
     res.json({
       username: user.username,
-      passwordLength: 8 
+      passwordLength: 8,
+      createdAt: user.createdAt,
     });
   } catch (err) {
     console.error("Error fetching user:", err);
