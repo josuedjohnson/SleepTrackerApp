@@ -1,0 +1,128 @@
+body {
+    background: url('../images/moonbackdrop.jpg') center/cover no-repeat;
+}
+
+.dashboard-container {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    min-height: 70vh;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+    height: 100vh;
+    width: auto;
+    overflow-y: auto;
+  }
+ 
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 45px;
+    color: #A8A4CE;
+    font-style: normal;
+    font-weight: 700;
+  }
+  
+  .profile-icon {
+    font-size: 55px;
+    color: #5FA8D3;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  .profile-icon:hover {
+    color: #4a97c9;
+  }
+  
+
+  .dashboard-card {
+    background: #ffffffdd;
+    border-radius: 25px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(6px);
+    flex: 1;
+    transition: 0.3s ease;
+  }
+
+  .dashboard-card h2 {
+    font-size: 25px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #5FA8D3; 
+    padding-bottom: 6px;
+    letter-spacing: 0.3px;
+    border-bottom: 2px solid transparent;
+    background-image: linear-gradient(to right, #5FA8D3, #A8A4CE);
+    background-repeat: no-repeat;
+    background-size: 100% 2px;
+    background-position: bottom left;
+  }
+  
+
+  .dashboard-grid-top {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr;
+    gap: 30px;
+  }
+
+  .dashboard-grid-bottom {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    padding-bottom: 30px;
+  }
+  
+
+  .sleep-log-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sleep-log-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 15px;
+  }
+  
+  .sleep-log-list li:hover {
+    background: #f5f5f5;
+    border-radius: 12px;
+    padding: 12px;
+  }
+  
+  .sleep-log-list svg {
+    color: #ff5c5c;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .sleep-log-list svg:hover {
+    color: #ff1f1f;
+  }
+  
+ 
+  @media (max-width: 900px) {
+    .dashboard-grid-top,
+    .dashboard-grid-bottom {
+      grid-template-columns: 1fr;
+    }
+  
+    .dashboard-container {
+      padding: 20px;
+    }
+  
+    .dashboard-card {
+      padding: 16px;
+    }
+  }
+  

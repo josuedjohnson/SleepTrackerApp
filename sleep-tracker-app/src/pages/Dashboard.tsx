@@ -14,7 +14,8 @@ import {
   Legend,
   Title,
 } from "chart.js";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaUserCircle } from "react-icons/fa";
+import "../styles/Dashboard.css";
 
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend, Title);
 
@@ -37,7 +38,6 @@ function Dashboard() {
     const fetchSleepData = async () => {
       try {
         if (!token) return navigate("/");
-
         const res = await axios.get("http://localhost:5001/sleep", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -143,7 +143,7 @@ function Dashboard() {
         label: "Hours Slept",
         data: sleepData.map((entry) => entry.hoursSlept),
         fill: false,
-        borderColor: "rgba(75,192,192,1)",
+        borderColor: "#A8A4CE",
         tension: 0.2,
       },
     ],
@@ -184,59 +184,53 @@ function Dashboard() {
   };
 
   return (
-    <div style={{ display: "flex", gap: "40px", padding: "20px" }}>
-      <div style={{ flex: 1 }}>
+    <div className="dashboard-container">
+      <div className="dashboard-header">
         <h1>Sleep Tracker Dashboard</h1>
-        <button onClick={() => navigate("/userprofile")}>Your Profile</button>
-        <SleepDataInputForm onSubmitSleepData={handleSleepSubmit} />
+        <FaUserCircle className="profile-icon" onClick={() => navigate("/userprofile")}/>
+        
       </div>
 
-      <div style={{ marginTop: "20px" }}>
+      <div className="dashboard-grid-top">
+        <div className="dashboard-card">
+          <h2>Log Your Sleep</h2>
+          <SleepDataInputForm onSubmitSleepData={handleSleepSubmit} />
+        </div>
+
+        <div className="dashboard-card">
         <h2>Sleep Logs</h2>
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <ul className="sleep-log-list">
           {sleepData.map((entry) => (
-            <li
-              key={entry.id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "6px 0",
-                borderBottom: "1px solid #eee",
-              }}
-            >
+            <li key={entry.id}>
               <span>
                 {entry.sleepStart.format("MM/DD HH:mm")} –{" "}
                 {entry.wakeUpTime.format("MM/DD HH:mm")} (
                 {entry.hoursSlept.toFixed(2)} h)
               </span>
-              <FaTrash
-                style={{ cursor: "pointer" }}
-                title="Delete entry"
-                onClick={() => handleDeleteSleep(entry.id)}
-              />
+              <FaTrash onClick={() => handleDeleteSleep(entry.id)}/>
             </li>
           ))}
         </ul>
+        </div>
       </div>
 
-      <div style={{ flex: 1 }}>
+      <div className="dashboard-grid-bottom">
+      <div className="dashboard-card">
         <h2>Sleep Duration Chart</h2>
         <Line data={chartData} options={chartOptions} />
-
-        {sleepData.length > 0 && (
-          <div style={{ marginTop: "20px" }}>
-            <h3>Latest Sleep Recommendation</h3>
-            <p>
-              {getRecommendation(
+      </div>
+        <div className="dashboard-card">
+        <h2>Latest Sleep Recommendation</h2>
+        <p>
+        {sleepData.length > 0 && 
+              getRecommendation(
                 sleepData[sleepData.length - 1].score,
                 sleepData[sleepData.length - 1].hoursSlept
               )}
             </p>
           </div>
-        )}
+        </div>
       </div>
-    </div>
   );
 }
 

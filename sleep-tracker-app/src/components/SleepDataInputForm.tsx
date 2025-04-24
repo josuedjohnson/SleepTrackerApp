@@ -72,7 +72,6 @@ function SleepDataInputForm({ onSubmitSleepData }: Props) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <form onSubmit={handleSubmit}>
-        <h2>Sleep Data Input</h2>
 
         <div style={{ marginBottom: "16px" }}>
           <DateTimePicker
@@ -83,7 +82,7 @@ function SleepDataInputForm({ onSubmitSleepData }: Props) {
           />
         </div>
 
-        <div style={{ marginBottom: "16px" }}>
+        <div>
           <DateTimePicker
             label="Wake Up Time"
             value={wakeUpTime}
@@ -112,7 +111,7 @@ function SleepDataInputForm({ onSubmitSleepData }: Props) {
                 style={{
                   fontSize: "28px",
                   cursor: "pointer",
-                  color: value <= score ? "gold" : "lightgray",
+                  color: value <= score ? "#A8A4CE" : "lightgray",
                 }}
                 onClick={() => setScore(value)}
               >
