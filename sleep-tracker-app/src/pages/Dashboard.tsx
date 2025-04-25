@@ -16,6 +16,7 @@ import {
 } from "chart.js";
 import { FaTrash } from "react-icons/fa";
 
+// Register Chart.js components
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend, Title);
 
 function Dashboard() {
@@ -53,7 +54,7 @@ function Dashboard() {
             hoursSlept,
             id: entry._id || entry.id,
             notes: entry.notes,
-            score: entry.score ?? 0,
+            score: entry.score !== undefined ? Number(entry.score) : 0,
           };
         });
 
@@ -103,7 +104,7 @@ function Dashboard() {
             wakeUpTime,
             hoursSlept,
             notes: saved.notes,
-            score: saved.score ?? 0,
+            score: data.score, // use user input score
           }].sort((a, b) => a.sleepStart.valueOf() - b.sleepStart.valueOf())
         );
         console.log("✅ Sleep entry saved");
@@ -184,57 +185,59 @@ function Dashboard() {
   };
 
   return (
-    <div style={{ display: "flex", gap: "40px", padding: "20px" }}>
-      <div style={{ flex: 1 }}>
-        <h1>Sleep Tracker Dashboard</h1>
-        <button onClick={() => navigate("/userprofile")}>Your Profile</button>
-        <SleepDataInputForm onSubmitSleepData={handleSleepSubmit} />
-      </div>
+    <div style={{ height: "100vh", overflowY: "auto" }}>
+      <div style={{ display: "flex", gap: "40px", padding: "20px" }}>
+        <div style={{ flex: 1 }}>
+          <h1>Sleep Tracker Dashboard</h1>
+          <button onClick={() => navigate("/userprofile")}>Your Profile</button>
+          <SleepDataInputForm onSubmitSleepData={handleSleepSubmit} />
+        </div>
 
-      <div style={{ marginTop: "20px" }}>
-        <h2>Sleep Logs</h2>
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          {sleepData.map((entry) => (
-            <li
-              key={entry.id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "6px 0",
-                borderBottom: "1px solid #eee",
-              }}
-            >
-              <span>
-                {entry.sleepStart.format("MM/DD HH:mm")} –{" "}
-                {entry.wakeUpTime.format("MM/DD HH:mm")} (
-                {entry.hoursSlept.toFixed(2)} h)
-              </span>
-              <FaTrash
-                style={{ cursor: "pointer" }}
-                title="Delete entry"
-                onClick={() => handleDeleteSleep(entry.id)}
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
+        <div style={{ marginTop: "20px" }}>
+          <h2>Sleep Logs</h2>
+          <ul style={{ listStyle: "none", padding: 0 }}>
+            {sleepData.map((entry) => (
+              <li
+                key={entry.id}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "6px 0",
+                  borderBottom: "1px solid #eee",
+                }}
+              >
+                <span>
+                  {entry.sleepStart.format("MM/DD HH:mm")} –{" "}
+                  {entry.wakeUpTime.format("MM/DD HH:mm")} (
+                  {entry.hoursSlept.toFixed(2)} h)
+                </span>
+                <FaTrash
+                  style={{ cursor: "pointer" }}
+                  title="Delete entry"
+                  onClick={() => handleDeleteSleep(entry.id)}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      <div style={{ flex: 1 }}>
-        <h2>Sleep Duration Chart</h2>
-        <Line data={chartData} options={chartOptions} />
+        <div style={{ flex: 1 }}>
+          <h2>Sleep Duration Chart</h2>
+          <Line data={chartData} options={chartOptions} />
 
-        {sleepData.length > 0 && (
-          <div style={{ marginTop: "20px" }}>
-            <h3>Latest Sleep Recommendation</h3>
-            <p>
-              {getRecommendation(
-                sleepData[sleepData.length - 1].score,
-                sleepData[sleepData.length - 1].hoursSlept
-              )}
-            </p>
-          </div>
-        )}
+          {sleepData.length > 0 && (
+            <div style={{ marginTop: "20px" }}>
+              <h3>Latest Sleep Recommendation</h3>
+              <p>
+                {getRecommendation(
+                  sleepData[sleepData.length - 1].score,
+                  sleepData[sleepData.length - 1].hoursSlept
+                )}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
