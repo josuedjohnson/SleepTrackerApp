@@ -57,7 +57,7 @@ function Dashboard() {
           };
         });
 
-        setSleepData(formatted.sort((a, b) => a.sleepStart.valueOf() - b.sleepStart.valueOf()));
+        setSleepData(formatted.sort((a : any, b : any) => a.sleepStart.valueOf() - b.sleepStart.valueOf()));
       } catch (err: any) {
         console.error("Error fetching sleep data:", err);
         if (err.response?.status === 401 || err.response?.status === 403) {

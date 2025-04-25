@@ -23,12 +23,6 @@ function UserProfile() {
         setUsername(response.data.username);
         setPasswordLength(response.data.passwordLength);
         setCreatedAt(response.data.createdAt);
-
-        const formattedDate = new Date(createdAt).toLocaleDateString(undefined, {
-          year: "numeric",
-          month: "long",
-          day: "numeric"
-        });
       } catch (error) {
         console.error("Failed to fetch user data", error);
         localStorage.removeItem("token");
